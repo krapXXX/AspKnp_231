@@ -1,12 +1,20 @@
 using System.Diagnostics;
 using AspKnP231.Models;
 using AspKnP231.Models.Home;
+using AspKnP231.Services.Hash;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspKnP231.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IHashService _hashService;           // Інжекція сервісу "через конструктор" -
+                                                              // рекомендований спосіб, передбачає 
+        public HomeController(IHashService hashService)       // readonly поле - посилання на сервіс та 
+        {                                                     // параметр(и) конструктора того ж типу даних
+            _hashService = hashService;                       // 
+        }
+
         public IActionResult IoC()
         {
             return View();

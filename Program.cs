@@ -7,7 +7,8 @@ builder.Services.AddControllersWithViews();
 
 // Реєструємо співставлення інтерфейсу та класу-сервісу у контейнері
 // "якщо буде запит на інжекцію IHashService, то слід видати об'єкт Md5HashService"
-builder.Services.AddSingleton<IHashService, Md5HashService>();
+// builder.Services.AddSingleton<IHashService, Md5HashService>();
+builder.Services.AddHash();   // замінено на розширення (див. HashExtension)
 
 var app = builder.Build();
 
