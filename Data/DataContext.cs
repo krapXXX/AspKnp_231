@@ -10,5 +10,54 @@ namespace AspKnP231.Data
 
         public DbSet<Entities.UserRole> UserRoles { get; set; }
 
+
+        public DataContext(DbContextOptions options) : base(options) { }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // налаштування моделі БД: а) відношення між сутностями
+
+            modelBuilder.Entity<Entities.UserAccess>()
+                .HasIndex(a => a.Login)
+                .IsUnique();
+
+            modelBuilder.Entity<Entities.UserAccess>()  // відношення може встановлюватись з автоматичним
+                .HasOne(a => a.UserData)                // визначенням ключів поєднання якщо: один з них Id або TableId
+                .WithMany(d => d.UserAccesses)          // інший - TableId (UserDataId), оскільки останнє порушується
+                .HasForeignKey(a => a.UserId);          // необхідно прямо зазначити ключ
+                // .HasPrincipalKey(d => d.Id)          // інший - за правилом, можна не зазначати
+
+            modelBuilder.Entity<Entities.UserAccess>()  // Іменування усіх ключів - за правилом, можна не зазначати,
+                .HasOne(a => a.UserRole)                // За відсутності інверсної властивості WithMany()
+                .WithMany();                            // лишається порожнім
+                                                        // .HasForeignKey(a => a.UserRoleId)
+                                                        // .HasPrincipalKey(r => r.Id);
+
+            // б) початкові дані
+            modelBuilder.Entity<Entities.UserRole>().HasData(
+                new Entities.UserRole
+                {
+                    Id = Guid.Parse("28578D03-1E83-4607-9FB0-631FED207DCF"),
+                    Name = "Self Registered",
+                    Description = "Користувачі, що самі зареєструвались на сайті. Мінімальні права доступу",
+                    CreateLevel = 0,
+                    ReadLevel = 0,
+                    UpdateLevel = 0,
+                    DeleteLevel = 0,
+                },
+                new Entities.UserRole
+                {
+                    Id = Guid.Parse("250FA2D3-0818-42D6-A1ED-112F115407D6"),
+                    Name = "Root Administrator",
+                    Description = "Користувач з максимальним доступом, через якого вводяться інші ролі та доступи",
+                    CreateLevel = -1,
+                    ReadLevel = -1,
+                    UpdateLevel = -1,
+                    DeleteLevel = -1,
+                }
+            );
+        }
+
     }
 }

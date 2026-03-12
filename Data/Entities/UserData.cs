@@ -12,5 +12,8 @@
 
         public DateTime? DeletedAt { get; set; }
 
+
+        // інверсна навігаційна властивість - через UserAccess.UserId 
+        public ICollection<UserAccess> UserAccesses { get; set; } = [];
     }
 }
