@@ -57,6 +57,27 @@ namespace AspKnP231.Data
                     DeleteLevel = -1,
                 }
             );
+
+            modelBuilder.Entity<Entities.UserData>().HasData(
+                new Entities.UserData
+                {
+                    Id = Guid.Parse("AE3A3665-8F44-4A2C-95A4-8BBCCBA7C80D"),
+                    Name = "Default Administrator",
+                    Email = "admin@change.me",
+                    Birthdate = new DateTime(2026, 3, 12),
+                });
+
+            modelBuilder.Entity<Entities.UserAccess>().HasData(
+                new Entities.UserAccess
+                {
+                    Id = Guid.Parse("F749F994-AF12-4EA1-8BEF-829EF751FC4A"),
+                    UserId = Guid.Parse("AE3A3665-8F44-4A2C-95A4-8BBCCBA7C80D"),  // !! з UserData
+                    UserRoleId = Guid.Parse("250FA2D3-0818-42D6-A1ED-112F115407D6"),  // !! Role
+                    Login = "DefaultAdministrator",
+                    Salt = "380B5CB5-1578-49A2-BCAF-4A1CA8AA9BC2",
+                    CreatedAt = new DateTime(2026, 3, 12),
+                    Dk = "4E455301C8628F110EADAB21A780FF766CFE0B95"
+                });
         }
 
     }
