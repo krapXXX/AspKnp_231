@@ -8,18 +8,22 @@ namespace AspKnP231.Models.Home
         [FromForm(Name = "user-name")]
         [Required(ErrorMessage = "Заповніть дане поле")]
         public String UserName { get; set; } = null!;
+
         
         [FromForm(Name = "user-email")]
         [Required(ErrorMessage = "Заповніть дане поле")]
         public String UserEmail { get; set; } = null!;        
+
         
         [FromForm(Name = "user-birthdate")]
         [Required(ErrorMessage = "Заповніть дане поле")]
-        public DateTime UserBirthdate { get; set; }
+        public DateTime? UserBirthdate { get; set; }
+
         
         [FromForm(Name = "user-login")]
         [Required(ErrorMessage = "Заповніть дане поле")]
         public String UserLogin { get; set; } = null!; 
+
 
         [FromForm(Name = "user-password")]
         [Required(ErrorMessage = "Заповніть дане поле")]
