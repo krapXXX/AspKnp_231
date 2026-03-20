@@ -24,6 +24,16 @@ namespace AspKnP231.Controllers
             return View();
         }
 
+        public IActionResult Profile()
+        {
+            // Захищаємо сторінку від неавторизованого доступу
+            if(HttpContext.User.Identity?.IsAuthenticated ?? false)
+            {
+                return View();
+            }
+            return Redirect("/");
+        }
+
         public IActionResult SignUp()
         {
             UserSignupViewModel viewModel = new();
@@ -199,12 +209,30 @@ namespace AspKnP231.Controllers
                     data = "Authentication rejected."
                 });
             }
+
+            HttpContext.Session.SetString("UserAccess", JsonSerializer.Serialize(userAccess));
+
             return Json(new
             {
                 status = 200,
-                // data = userAccess.UserData   // Object Cycle
-                data = userAccess.UserData.Name
+                data = "OK"
             });
+
+            /* Авторизація. Збереження результатів автентифікації.
+             * За успішними результатами автентифікації у сесії зберігається
+             * інформація про вхід.
+             * У майбутніх запитах цю інформацію слід відновлювати
+             * та приймати рішення щодо авторизації
+             */
         }
     }
 }
+/* Д.З. Реалізувати стилізацію посилання переходу на 
+ * сторінку профілю користувача в залежності від 
+ * наявності/відсутності картинки-аватарки.
+ * Додати підтвердження виходу з авторизованого 
+ * режиму окремим модальним діалогом
+ * [Ви виходите з системи
+ *  Підтвержуєте
+ *  Так   Ні      ]
+ */
