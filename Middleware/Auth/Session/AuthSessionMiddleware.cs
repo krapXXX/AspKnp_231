@@ -36,6 +36,11 @@ namespace AspKnP231.Middleware.Auth.Session
                             new Claim(ClaimTypes.NameIdentifier, userAccess.Login),
                             new Claim(ClaimTypes.Thumbprint, userAccess.AvatarFilename ?? ""),
                             new Claim(ClaimTypes.DateOfBirth, userAccess.UserData.Birthdate.ToShortDateString()),
+                            new Claim(ClaimTypes.Role, 
+                                userAccess.UserRoleId == Guid.Parse("250FA2D3-0818-42D6-A1ED-112F115407D6")
+                                ? "Admin"
+                                : "Guest"
+                            ),
                         ],
                         nameof(AuthSessionMiddleware)
                     ));

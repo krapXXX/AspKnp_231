@@ -15,6 +15,8 @@ namespace AspKnP231.Controllers
             String mimeType = ext switch
             {
                 ".png" => "image/png",
+                ".jpg" => "image/jpeg",
+                ".webp" => "image/webp",
                 _ => "application/octet-stream"
             };
             try
