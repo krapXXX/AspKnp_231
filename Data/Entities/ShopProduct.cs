@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace AspKnP231.Data.Entities
 {
-    public class ShopProduct
+    public record ShopProduct
     {
         public Guid Id { get; set; }
 
@@ -19,6 +20,12 @@ namespace AspKnP231.Data.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
+        public int Stock { get; set; }
+
         public DateTime? DeletedAt { get; set; }
+
+
+        [JsonIgnore]
+        public ShopSection Section { get; set; } = null!;
     }
 }

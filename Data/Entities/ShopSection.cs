@@ -17,5 +17,8 @@
 
         public DateTime? DeletedAt   { get; set; }
 
+
+        public ICollection<ShopProduct> Products { get; set; } = [];
+
     }
 }

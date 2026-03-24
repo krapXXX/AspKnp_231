@@ -4,6 +4,7 @@ using AspKnP231.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AspKnP231.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260324072545_AddProducts")]
+    partial class AddProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace AspKnP231.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Slug")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");
@@ -54,12 +57,6 @@ namespace AspKnP231.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ShopSectionId");
-
-                    b.HasIndex("Slug")
-                        .IsUnique()
-                        .HasFilter("[Slug] IS NOT NULL");
 
                     b.ToTable("ShopProducts");
                 });
@@ -86,16 +83,13 @@ namespace AspKnP231.Migrations
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Slug")
-                        .IsUnique();
 
                     b.ToTable("ShopSections");
                 });
@@ -244,17 +238,6 @@ namespace AspKnP231.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AspKnP231.Data.Entities.ShopProduct", b =>
-                {
-                    b.HasOne("AspKnP231.Data.Entities.ShopSection", "Section")
-                        .WithMany("Products")
-                        .HasForeignKey("ShopSectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Section");
-                });
-
             modelBuilder.Entity("AspKnP231.Data.Entities.UserAccess", b =>
                 {
                     b.HasOne("AspKnP231.Data.Entities.UserData", "UserData")
@@ -272,11 +255,6 @@ namespace AspKnP231.Migrations
                     b.Navigation("UserData");
 
                     b.Navigation("UserRole");
-                });
-
-            modelBuilder.Entity("AspKnP231.Data.Entities.ShopSection", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("AspKnP231.Data.Entities.UserData", b =>
