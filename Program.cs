@@ -43,6 +43,8 @@ builder.Services.AddCors(options =>
        .AllowAnyMethod()  // або .WithMethods("PUT", "...")
 ));
 
+builder.Services.AddHttpContextAccessor();   // для доступу до HttpContext у сервісах (поза контролерами)
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
