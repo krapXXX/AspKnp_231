@@ -1,6 +1,7 @@
 ﻿using AspKnP231.Models.User;
 using Azure.Core;
 using Microsoft.AspNetCore.Authentication;
+using System.Reflection.PortableExecutable;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -14,29 +15,42 @@ namespace AspKnP231.Middleware.Auth.Token
         public async Task InvokeAsync(HttpContext context)
         {
             JwtPayload jwtPayload;
-            try 
-            { 
+            try
+            {
                 jwtPayload = GetJwtPayload(context);
+
+                // Перевірити часові параметри
+                if (jwtPayload.Exp != null)
+                {
+                    if (jwtPayload.Exp.Value < DateTime.Now.Ticks)
+                    {
+                        throw new Exception("Token expired");
+                    }
+                }
+
                 context.User = new ClaimsPrincipal(
-                      new ClaimsIdentity(
-                      [
-                           new Claim(ClaimTypes.Name, ""),
-                            new Claim(ClaimTypes.Email, ""),
-                            new Claim(ClaimTypes.NameIdentifier, ""),
-                            new Claim(ClaimTypes.Thumbprint, ""),
-                            new Claim(ClaimTypes.DateOfBirth, ""),
-                            new Claim(ClaimTypes.Role,""),
-                      ],
-                      nameof(AuthTokenMiddleware)
-                  ));
+
+                       new ClaimsIdentity(
+[
+    new Claim(ClaimTypes.Name, jwtPayload.Name),
+    new Claim(ClaimTypes.Email, jwtPayload.Email),
+    new Claim(ClaimTypes.NameIdentifier, jwtPayload.Sub!),
+    new Claim(ClaimTypes.Thumbprint, jwtPayload.Ava ?? ""),
+    new Claim(ClaimTypes.DateOfBirth, jwtPayload.Dob),
+    new Claim(ClaimTypes.Role, jwtPayload.Aud ?? "")
+],
+                    nameof(AuthTokenMiddleware)
+                ));
             }
             catch (Exception ex)
             {
+                context.Items.Add(nameof(AuthTokenMiddleware), ex.Message);
             }
 
-            await _next(context);
+        await _next(context);
         }
-
+        private string UTF8FromBase64(String base64string)=>
+            Encoding.UTF8.GetString(Base64UrlTextEncoder.Decode(base64string));
         private JwtPayload GetJwtPayload(HttpContext context)
         {
             String authHeader = context.Request.Headers.Authorization.ToString();
@@ -64,7 +78,7 @@ namespace AspKnP231.Middleware.Auth.Token
             String decodedHeader;
             try
             {
-                decodedHeader = Encoding.UTF8.GetString(Base64UrlTextEncoder.Decode(header));
+                decodedHeader = UTF8FromBase64(header);
             }
             catch
             {
@@ -103,7 +117,8 @@ namespace AspKnP231.Middleware.Auth.Token
             }
 
             // Відокремлюємо дані та декодуємо їх
-            return JsonSerializer.Deserialize<JwtPayload>(signedPart.Split('.')[1], JwtModel.options)!;
+            return JsonSerializer.Deserialize<JwtPayload>(
+                UTF8FromBase64(signedPart.Split('.')[1]), JwtModel.options)!;
         }
     }
 }
@@ -119,9 +134,4 @@ Access->Claims   |       Payload->Claims
     Auth  (Privacy)  (Cart)  Auth
   (Claims)                  (Claims)
  
-
-Д.З. Доповнити "Кабінет користувача" на фронтенді
-декількома кнопками, що формують пошкоджені дані 
-авторизації (неправильні токени). Реалізувати 
-виведення помилок, що повертається бекендом.
  */

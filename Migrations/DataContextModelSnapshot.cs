@@ -21,7 +21,59 @@ namespace AspKnP231.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.Entity("AspKnP231.Data.Entities.Discount", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uniqueidentifier");
 
+                b.Property<string>("Description")
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<DateTime?>("FinishMoment")
+                    .HasColumnType("datetime2");
+
+                b.Property<double>("Percent")
+                    .HasColumnType("float");
+
+                b.Property<decimal?>("Price")
+                    .HasColumnType("decimal(18,2)");
+
+                b.Property<DateTime>("StartMoment")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("Title")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.HasKey("Id");
+
+                b.ToTable("Discounts");
+            });
+
+            modelBuilder.Entity("AspKnP231.Data.Entities.DiscountDetail", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<Guid>("DiscountId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.Property<decimal?>("Price")
+                    .HasColumnType("decimal(18,2)");
+
+                b.Property<Guid>("ProductId")
+                    .HasColumnType("uniqueidentifier");
+
+                b.HasKey("Id");
+
+                b.HasIndex("DiscountId");
+
+                b.HasIndex("ProductId");
+
+                b.ToTable("DiscountDetails");
+            });
             modelBuilder.Entity("AspKnP231.Data.Entities.ShopProduct", b =>
                 {
                     b.Property<Guid>("Id")
@@ -243,7 +295,24 @@ namespace AspKnP231.Migrations
                             UpdateLevel = -1
                         });
                 });
+            modelBuilder.Entity("AspKnP231.Data.Entities.DiscountDetail", b =>
+            {
+                b.HasOne("AspKnP231.Data.Entities.Discount", "Discount")
+                    .WithMany()
+                    .HasForeignKey("DiscountId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
+                b.HasOne("AspKnP231.Data.Entities.ShopProduct", "Product")
+                    .WithMany()
+                    .HasForeignKey("ProductId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Discount");
+
+                b.Navigation("Product");
+            });
             modelBuilder.Entity("AspKnP231.Data.Entities.ShopProduct", b =>
                 {
                     b.HasOne("AspKnP231.Data.Entities.ShopSection", "Section")

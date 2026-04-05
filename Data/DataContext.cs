@@ -14,7 +14,9 @@ namespace AspKnP231.Data
         public DbSet<Entities.ShopSection> ShopSections { get; set; }
 
         public DbSet<Entities.ShopProduct> ShopProducts { get; set; }
+        public DbSet<Entities.Discount> Discounts { get; set; }
 
+        public DbSet<Entities.DiscountDetail> DiscountDetails { get; set; }
 
         public DataContext(DbContextOptions options) : base(options) { }
 
@@ -22,7 +24,14 @@ namespace AspKnP231.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // налаштування моделі БД: а) відношення між сутностями
+            modelBuilder.Entity<Entities.DiscountDetail>()
+               .HasOne(d => d.Product)
+               .WithMany()
+               .HasForeignKey(d => d.ProductId);
 
+            modelBuilder.Entity<Entities.DiscountDetail>()
+               .HasOne(d => d.Discount)
+               .WithMany();
             modelBuilder.Entity<Entities.UserAccess>()
                 .HasIndex(a => a.Login)
                 .IsUnique();
